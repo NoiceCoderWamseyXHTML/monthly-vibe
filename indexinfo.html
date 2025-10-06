@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  background: white;
+  overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+/* Content */
+div.content {
+  margin-left: 200px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Neon Effect */
+.neon-text {
+  font-size: 4rem;
+  color: #fff;
+  text-shadow: 0 0 5px #ff005e, 0 0 10px #ff005e, 0 0 20px #ff005e, 
+               0 0 40px #ff005e, 0 0 80px #ff005e;
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #ff005e, 0 0 10px #ff005e, 0 0 20px #ff005e, 
+                 0 0 40px #ff005e, 0 0 80px #ff005e;
+  }
+  100% {
+    text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff, 0 0 40px #00d4ff, 
+                 0 0 80px #00d4ff, 0 0 160px #00d4ff;
+  }
+}
+
+/* Responsive */
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a { float: left; }
+  div.content { margin-left: 0; }
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a href="indexfull.html">Home</a>
+  <a href="indexfull2.html">News</a>
+  <a class="active" href="#info">Info</a>
+  <a href="indexcontact.html">Contact</a>
+</div>
+
+<div class="content">
+  <h1 class="neon-text">Info</h1>
+  <h2>Information on this website will be on this page...</h2>
+</div>
+
+</body>
+</html>
