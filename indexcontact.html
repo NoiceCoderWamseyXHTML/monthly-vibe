@@ -6,31 +6,25 @@
     <title>Ramsey's Contact Information</title>
     <link href="https://fonts.googleapis.com/css2?family=Courgette&display=swap" rel="stylesheet">
     <style>
-        /*
-         * The CSS below is the plain CSS equivalent of the provided SCSS.
-         */
 
         :root {
             --speed: 20s;
-            --platform-speed: calc(var(--speed) * 0.4); /* 8s */
-            --panel-rotate-speed: calc(var(--speed) * 3); /* 60s */
+            --platform-speed: calc(var(--speed) * 0.4);
+            --panel-rotate-speed: calc(var(--speed) * 3);
             --panel-count: 16;
         }
 
-        /* Reset and Box-Sizing (kept exactly as in your original) */
         *, *::before, *::after {
             padding: 0;
             margin: 0 auto;
             box-sizing: border-box;
         }
 
-        /* Base Font Size */
         html, body {
             font-size: 32px;
             height: 100%;
         }
 
-        /* Sidebar (fixed on left) */
         .sidebar {
             width: 200px;
             background-color: #f1f1f1;
@@ -60,11 +54,8 @@
             background-color: #555;
             color: white;
         }
-
-        /* Content area — contains the platform and uses the same styles you had on body
-           so the platform behaves exactly as before. It is shifted right to make room for the sidebar. */
         .content {
-            margin-left: 200px; /* leave space for the fixed sidebar */
+            margin-left: 200px;
             font-family: 'Courgette', cursive;
             background-color: #000;
             background-image: radial-gradient(circle, #012, #000 15em);
@@ -73,26 +64,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 3D Perspective Setup */
             perspective: 75em;
             perspective-origin: 50% calc(50% - 5em);
             transform-style: preserve-3d;
         }
 
-        /* Platform Container (exactly as original) */
         .platform {
             position: relative;
             transform-style: preserve-3d;
             animation: platform var(--platform-speed) infinite ease-in-out;
         }
 
-        /* Platform Animation Keyframes */
         @keyframes platform {
             0%, 100% { transform: translateY(-0.5em);}
             50% { transform: translateY(0.5em);}
         }
 
-        /* Plate (Circles) Styles */
         .plate {
             position: absolute;
             top: 50%; left: 50%;
@@ -100,21 +87,18 @@
             transform-style: preserve-3d;
         }
 
-        /* First Plate (Top) */
         .plate:nth-child(1) {
             width: 16em; height: 16em;
             background-image: radial-gradient(#444, #111);
             transform: translate(-50%, -50%) rotateX(90deg) translateZ(2em);
         }
 
-        /* Second Plate (Bottom) */
         .plate:nth-child(2) {
             width: 14em; height: 14em;
             background-image: radial-gradient(#000, #222);
             transform: translate(-50%, -50%) rotateX(90deg) translateZ(-2em);
         }
 
-        /* Plate ::before (Side Rim) */
         .plate::before {
             content: '';
             position: absolute;
@@ -125,7 +109,6 @@
             transform-origin: top;
         }
 
-        /* Plate ::after (Plate Shadow/Side) */
         .plate::after {
             content: '';
             position: absolute;
@@ -136,7 +119,6 @@
             transform: translate(-50%, -50%) translateZ(-0.5em);
         }
 
-        /* Panel Styles */
         .panel {
             position: absolute;
             top: 50%; left: 50%;
@@ -147,7 +129,6 @@
             animation: panalRotate var(--panel-rotate-speed) infinite linear;
         }
 
-        /* Panel Rotation Animation Keyframes */
         @keyframes panalRotate {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.1; }
@@ -155,7 +136,6 @@
             to { transform: translate(-50%, calc(-50% + 0.25em)) rotateY(360deg) translateZ(7em) rotateX(-15deg); }
         }
 
-        /* Panel Delay Calculations (Compiled from SCSS @for loop) */
         .panel:nth-child(1) { animation-delay: 0s; }
         .panel:nth-child(2) { animation-delay: -3.75s; }
         .panel:nth-child(3) { animation-delay: -7.5s; }
@@ -173,7 +153,6 @@
         .panel:nth-child(15) { animation-delay: -52.5s; }
         .panel:nth-child(16) { animation-delay: -56.25s; }
 
-        /* Panel ::after Text Delay Calculations */
         .panel:nth-child(1)::after { animation-delay: 0s; }
         .panel:nth-child(2)::after { animation-delay: -1.25s; }
         .panel:nth-child(3)::after { animation-delay: -2.5s; }
@@ -189,9 +168,7 @@
         .panel:nth-child(13)::after { animation-delay: -15s; }
         .panel:nth-child(14)::after { animation-delay: -16.25s; }
         .panel:nth-child(15)::after { animation-delay: -17.5s; }
-        .panel:nth-child(16)::after { animation-delay: -18.75s; }
-
-        /* Panel ::after (The Text) */
+        .panel:nth-child(16)::after { a
         .panel::after {
             position: absolute;
             top: 50%; left: 50%;
@@ -199,21 +176,19 @@
             font-weight: 700;
             font-size: 2em;
             white-space: nowrap;
-            color: #0009; /* Low opacity black */
+            color: #0009;
             text-shadow:
-                0 0 5px #0af, /* Light blue glow */
+                0 0 5px #0af,
                 0 0 15px #0af,
                 0 0 30px #0af;
             animation: textMove var(--speed) infinite linear;
         }
 
-        /* Text Movement Animation Keyframes */
         @keyframes textMove {
             from { transform: translate(2rem, -50%); }
             to { transform: translate(-42.64rem, -50%); }
         }
 
-        /* Small responsive tweak so on very small screens the sidebar stacks */
         @media screen and (max-width: 700px) {
             .sidebar {
                 width: 100%;
