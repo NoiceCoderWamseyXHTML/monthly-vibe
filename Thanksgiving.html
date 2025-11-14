@@ -192,73 +192,20 @@
         const roomGroup = new THREE.Group();
         scene.add(roomGroup);
 
-        const wallMaterial = new THREE.MeshStandardMaterial({
-          color: 0x2a1810,
-          roughness: 0.8,
-          metalness: 0.05
-        });
-
         const floorMaterial = new THREE.MeshStandardMaterial({
           color: 0x3a2415,
           roughness: 0.7,
           metalness: 0.05
-        });
+  });
 
-        const sideWallGeo = new THREE.BoxGeometry(30, 14, 0.6);
-        const backWallGeo = new THREE.BoxGeometry(30, 14, 0.6);
         const floorGeo = new THREE.BoxGeometry(30, 0.6, 30);
-
-        const backWall = new THREE.Mesh(backWallGeo, wallMaterial);
-        backWall.position.set(0, 7, -15);
-        backWall.receiveShadow = true;
-        roomGroup.add(backWall);
-
-        const leftWall = new THREE.Mesh(sideWallGeo, wallMaterial);
-        leftWall.position.set(-15, 7, 0);
-        leftWall.rotation.y = Math.PI / 2;
-        leftWall.receiveShadow = true;
-        roomGroup.add(leftWall);
-
-        const rightWall = new THREE.Mesh(sideWallGeo, wallMaterial);
-        rightWall.position.set(15, 7, 0);
-        rightWall.rotation.y = -Math.PI / 2;
-        rightWall.receiveShadow = true;
-        roomGroup.add(rightWall);
 
         const floor = new THREE.Mesh(floorGeo, floorMaterial);
         floor.position.set(0, 0, 0);
         floor.receiveShadow = true;
         roomGroup.add(floor);
+}
 
-        const windowGeo = new THREE.PlaneGeometry(10, 4);
-        const windowMat = new THREE.MeshStandardMaterial({
-          color: 0x1a2232,
-          emissive: 0x334466,
-          emissiveIntensity: 0.4,
-          metalness: 0.1,
-          roughness: 0.5
-        });
-        const windowMesh = new THREE.Mesh(windowGeo, windowMat);
-        windowMesh.position.set(0, 9, -14.9);
-        roomGroup.add(windowMesh);
-
-        const barMat = new THREE.MeshStandardMaterial({
-          color: 0x20100a,
-          roughness: 0.7,
-          metalness: 0.1
-        });
-
-        const barHGeo = new THREE.BoxGeometry(10.2, 0.1, 0.1);
-        const barVGeo = new THREE.BoxGeometry(0.1, 4.2, 0.1);
-
-        const barH = new THREE.Mesh(barHGeo, barMat);
-        barH.position.set(0, 9, -14.85);
-        const barV = new THREE.Mesh(barVGeo, barMat);
-        barV.position.set(0, 9, -14.85);
-
-        roomGroup.add(barH);
-        roomGroup.add(barV);
-      }
 
       function createTable() {
         const tableGroup = new THREE.Group();
