@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Three.js Thanksgiving Feast Scene</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: radial-gradient(circle at top, #1a0b06, #050306);
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+
+      #info {
+        position: absolute;
+        top: 7%;
+        left: 20%;
+        z-index: 10;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #ffeac4;
+        font-size: 12px;
+        line-height: 1.5;
+        pointer-events: none;
+      }
+
+      #info strong {
+        color: #ffcc66;
+      }
+
+      canvas {
+        display: block;
+      }
+
+    .sidebar {
+      margin: 0;
+      padding: 0;
+      width: 200px;
+      background-color: #f1f1f1;
+      position: fixed;
+      height: 100%;
+      overflow: auto;
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      display: block;
+      color: black;
+      padding: 16px;
+      text-decoration: none;
+    }
+    .sidebar a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+    .sidebar a:hover:not(.active) {
+      background-color: #555;
+      color: white;
+    }
+
+    .content {
+      margin-left: 200px;
+      padding: 0;
+      height: 100%;
+      min-height: 100vh;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    @media screen and (max-width: 700px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .sidebar a { float: left; }
+      .content { margin-left: 0; }
+    }
+
+    @media screen and (max-width: 400px) {
+      .sidebar a {
+        text-align: center;
+        float: none;
+      }
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="sidebar">
+    <a href="indexfull.html">Home</a>
+    <a class="active" href="indexspooky.html">News</a>
+    <a href="indexinfo.html">Info</a>
+    <a href="indexcontact.html">Contact</a>
+  </div>
+
+
+    <div id="info">
+      <strong>Thanksgiving Feast – Three.js</strong><br />
+      Drag = orbit, Scroll = zoom, Right-drag = pan<br />
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+      let scene, camera, renderer, controls;
+      let table, turkeyGroup, candleLights = [];
+      let dustParticles = [];
+      let leafMeshes = [];
+      let clock = new THREE.Clock();
+      let resizeTimeout = null;
+
+      init();
+      animate();
+
+      function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050307);
+        scene.fog = new THREE.FogExp2(0x0b0503, 0.035);
+
+        const aspect = window.innerWidth / window.innerHeight;
+        camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 200);
+        camera.position.set(0, 6, 16);
+        camera.lookAt(0, 3, 0);
+
+        renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: false
+        });
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.physicallyCorrectLights = true;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 8;
+        controls.maxDistance = 25;
+        controls.target.set(0, 3, 0);
+        controls.maxPolarAngle = Math.PI / 2.1;
+
+        addEnvironmentLights();
+
+        createRoom();
+        createTable();
+        createTurkeyCenterpiece();
+        createSideDishes();
+        createCandles();
+        createDustParticles();
+        createFallingLeaves();
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function addEnvironmentLights() {
+        const ambient = new THREE.AmbientLight(0xffc58a, 0.25);
+        scene.add(ambient);
+
+        const spot = new THREE.SpotLight(0xffddaa, 0.7, 40, Math.PI / 5, 0.35, 1.5);
+        spot.position.set(0, 18, 4);
+        spot.target.position.set(0, 3, 0);
+        spot.castShadow = true;
+        spot.shadow.mapSize.width = 2048;
+        spot.shadow.mapSize.height = 2048;
+        spot.shadow.bias = -0.0004;
+        scene.add(spot);
+        scene.add(spot.target);
+
+        const leftRim = new THREE.DirectionalLight(0x88b5ff, 0.22);
+        leftRim.position.set(-20, 12, 8);
+        leftRim.castShadow = false;
+        scene.add(leftRim);
+
+        const backRim = new THREE.DirectionalLight(0x884422, 0.18);
+        backRim.position.set(10, 8, -10);
+        scene.add(backRim);
+      }
+
+      function createRoom() {
+        const roomGroup = new THREE.Group();
+        scene.add(roomGroup);
+
+        const wallMaterial = new THREE.MeshStandardMaterial({
+          color: 0x2a1810,
+          roughness: 0.8,
+          metalness: 0.05
+        });
+
+        const floorMaterial = new THREE.MeshStandardMaterial({
+          color: 0x3a2415,
+          roughness: 0.7,
+          metalness: 0.05
+        });
+
+        const sideWallGeo = new THREE.BoxGeometry(30, 14, 0.6);
+        const backWallGeo = new THREE.BoxGeometry(30, 14, 0.6);
+        const floorGeo = new THREE.BoxGeometry(30, 0.6, 30);
+
+        const backWall = new THREE.Mesh(backWallGeo, wallMaterial);
+        backWall.position.set(0, 7, -15);
+        backWall.receiveShadow = true;
+        roomGroup.add(backWall);
+
+        const leftWall = new THREE.Mesh(sideWallGeo, wallMaterial);
+        leftWall.position.set(-15, 7, 0);
+        leftWall.rotation.y = Math.PI / 2;
+        leftWall.receiveShadow = true;
+        roomGroup.add(leftWall);
+
+        const rightWall = new THREE.Mesh(sideWallGeo, wallMaterial);
+        rightWall.position.set(15, 7, 0);
+        rightWall.rotation.y = -Math.PI / 2;
+        rightWall.receiveShadow = true;
+        roomGroup.add(rightWall);
+
+        const floor = new THREE.Mesh(floorGeo, floorMaterial);
+        floor.position.set(0, 0, 0);
+        floor.receiveShadow = true;
+        roomGroup.add(floor);
+
+        const windowGeo = new THREE.PlaneGeometry(10, 4);
+        const windowMat = new THREE.MeshStandardMaterial({
+          color: 0x1a2232,
+          emissive: 0x334466,
+          emissiveIntensity: 0.4,
+          metalness: 0.1,
+          roughness: 0.5
+        });
+        const windowMesh = new THREE.Mesh(windowGeo, windowMat);
+        windowMesh.position.set(0, 9, -14.9);
+        roomGroup.add(windowMesh);
+
+        const barMat = new THREE.MeshStandardMaterial({
+          color: 0x20100a,
+          roughness: 0.7,
+          metalness: 0.1
+        });
+
+        const barHGeo = new THREE.BoxGeometry(10.2, 0.1, 0.1);
+        const barVGeo = new THREE.BoxGeometry(0.1, 4.2, 0.1);
+
+        const barH = new THREE.Mesh(barHGeo, barMat);
+        barH.position.set(0, 9, -14.85);
+        const barV = new THREE.Mesh(barVGeo, barMat);
+        barV.position.set(0, 9, -14.85);
+
+        roomGroup.add(barH);
+        roomGroup.add(barV);
+      }
+
+      function createTable() {
+        const tableGroup = new THREE.Group();
+        scene.add(tableGroup);
+
+        const topGeo = new THREE.BoxGeometry(14, 0.5, 6);
+        const topMat = new THREE.MeshStandardMaterial({
+          color: 0x6b3b1e,
+          roughness: 0.55,
+          metalness: 0.15
+        });
+        table = new THREE.Mesh(topGeo, topMat);
+        table.castShadow = true;
+        table.receiveShadow = true;
+        table.position.set(0, 3, 0);
+        tableGroup.add(table);
+
+        const legGeo = new THREE.BoxGeometry(0.6, 3, 0.6);
+        const legMat = new THREE.MeshStandardMaterial({
+          color: 0x4b2a16,
+          roughness: 0.7,
+          metalness: 0.1
+        });
+
+        const legPositions = [
+          [-6.5, 1.5, -2.5],
+          [6.5, 1.5, -2.5],
+          [-6.5, 1.5, 2.5],
+          [6.5, 1.5, 2.5]
+        ];
+
+        legPositions.forEach(function (pos) {
+          const leg = new THREE.Mesh(legGeo, legMat);
+          leg.position.set(pos[0], pos[1], pos[2]);
+          leg.castShadow = true;
+          leg.receiveShadow = true;
+          tableGroup.add(leg);
+        });
+
+        const runnerGeo = new THREE.BoxGeometry(4, 0.05, 6.2);
+        const runnerMat = new THREE.MeshStandardMaterial({
+          color: 0x993322,
+          roughness: 0.4,
+          metalness: 0.15,
+          emissive: 0x220000,
+          emissiveIntensity: 0.3
+        });
+        const runner = new THREE.Mesh(runnerGeo, runnerMat);
+        runner.position.set(0, 3.28, 0);
+        runner.castShadow = true;
+        runner.receiveShadow = true;
+        tableGroup.add(runner);
+      }
+
+      function createTurkeyCenterpiece() {
+        turkeyGroup = new THREE.Group();
+        turkeyGroup.position.set(0, 3.6, 0);
+        scene.add(turkeyGroup);
+
+        const bodyGeo = new THREE.SphereGeometry(1.6, 32, 32);
+        bodyGeo.scale(1.4, 1, 1.8);
+        const turkeySkinMat = new THREE.MeshStandardMaterial({
+          color: 0xc97a3c,
+          roughness: 0.42,
+          metalness: 0.15,
+          emissive: 0x2c1309,
+          emissiveIntensity: 0.12
+        });
+        const body = new THREE.Mesh(bodyGeo, turkeySkinMat);
+        body.castShadow = true;
+        body.receiveShadow = true;
+        body.position.set(0, 0.6, 0);
+        turkeyGroup.add(body);
+
+        const breastGeo = new THREE.SphereGeometry(0.9, 32, 32);
+        breastGeo.scale(1.6, 0.7, 1.2);
+        const breastMat = new THREE.MeshStandardMaterial({
+          color: 0xe4a96d,
+          roughness: 0.48,
+          metalness: 0.2,
+          emissive: 0x3a2011,
+          emissiveIntensity: 0.2
+        });
+        const breast = new THREE.Mesh(breastGeo, breastMat);
+        breast.castShadow = true;
+        breast.receiveShadow = true;
+        breast.position.set(0, 0.7, 0.2);
+        turkeyGroup.add(breast);
+
+        const drumstickMat = new THREE.MeshStandardMaterial({
+          color: 0xcd8244,
+          roughness: 0.45,
+          metalness: 0.18,
+          emissive: 0x2b160b,
+          emissiveIntensity: 0.15
+        });
+
+        const drumGeo = new THREE.SphereGeometry(0.6, 24, 24);
+        drumGeo.scale(0.9, 1.2, 1);
+        const leftDrum = new THREE.Mesh(drumGeo, drumstickMat);
+        leftDrum.position.set(-1.2, 0.7, 0.4);
+        leftDrum.rotation.set(0.4, 0.4, 0.2);
+        leftDrum.castShadow = true;
+        leftDrum.receiveShadow = true;
+        turkeyGroup.add(leftDrum);
+
+        const rightDrum = leftDrum.clone();
+        rightDrum.position.set(1.2, 0.7, 0.4);
+        rightDrum.rotation.set(0.4, -0.4, -0.2);
+        turkeyGroup.add(rightDrum);
+
+        const boneMat = new THREE.MeshStandardMaterial({
+          color: 0xf8f0e4,
+          roughness: 0.3,
+          metalness: 0.02
+        });
+        const boneShaftGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.5, 16);
+        const boneHeadGeo = new THREE.SphereGeometry(0.16, 16, 16);
+
+        const leftBoneGroup = new THREE.Group();
+        const leftShaft = new THREE.Mesh(boneShaftGeo, boneMat);
+        leftShaft.position.set(0, 0.22, 0);
+        leftShaft.castShadow = true;
+        leftShaft.receiveShadow = true;
+        leftBoneGroup.add(leftShaft);
+
+        const leftHead1 = new THREE.Mesh(boneHeadGeo, boneMat);
+        leftHead1.position.set(0.12, 0.5, 0);
+        const leftHead2 = leftHead1.clone();
+        leftHead2.position.set(-0.12, 0.5, 0);
+        leftBoneGroup.add(leftHead1);
+        leftBoneGroup.add(leftHead2);
+
+        leftBoneGroup.position.copy(leftDrum.position).add(new THREE.Vector3(-0.1, 0.9, 0.2));
+        leftBoneGroup.rotation.set(0.7, 0.5, 0.2);
+        turkeyGroup.add(leftBoneGroup);
+
+        const rightBoneGroup = leftBoneGroup.clone();
+        rightBoneGroup.position.copy(rightDrum.position).add(new THREE.Vector3(0.1, 0.9, 0.2));
+        rightBoneGroup.rotation.set(0.7, -0.5, -0.2);
+        turkeyGroup.add(rightBoneGroup);
+
+        const wingGeo = new THREE.SphereGeometry(0.7, 24, 24);
+        wingGeo.scale(1.4, 0.4, 1);
+        const wingMat = new THREE.MeshStandardMaterial({
+          color: 0xc6793b,
+          roughness: 0.5,
+          metalness: 0.1,
+          emissive: 0x2a1108,
+          emissiveIntensity: 0.1
+        });
+
+        const leftWing = new THREE.Mesh(wingGeo, wingMat);
+        leftWing.position.set(-1.5, 0.7, -0.2);
+        leftWing.rotation.set(0.1, 0.7, 0.9);
+        leftWing.castShadow = true;
+        leftWing.receiveShadow = true;
+        turkeyGroup.add(leftWing);
+
+        const rightWing = leftWing.clone();
+        rightWing.position.set(1.5, 0.7, -0.2);
+        rightWing.rotation.set(0.1, -0.7, -0.9);
+        turkeyGroup.add(rightWing);
+
+        const platterGeo = new THREE.CylinderGeometry(2.8, 2.8, 0.15, 32);
+        const platterMat = new THREE.MeshStandardMaterial({
+          color: 0xf1f0ea,
+          roughness: 0.35,
+          metalness: 0.7,
+          emissive: 0x2a2620,
+          emissiveIntensity: 0.1
+        });
+        const platter = new THREE.Mesh(platterGeo, platterMat);
+        platter.castShadow = true;
+        platter.receiveShadow = true;
+        platter.position.set(0, 0.1, 0);
+        turkeyGroup.add(platter);
+
+        const greensMat = new THREE.MeshStandardMaterial({
+          color: 0x3c7a2b,
+          roughness: 0.9,
+          metalness: 0.0,
+          emissive: 0x102008,
+          emissiveIntensity: 0.5
+        });
+
+        const greensCount = 18;
+        for (let i = 0; i < greensCount; i++) {
+          const angle = (i / greensCount) * Math.PI * 2;
+          const radius = 2.4 + (Math.random() - 0.5) * 0.15;
+          const geo = new THREE.SphereGeometry(0.32 + Math.random() * 0.12, 10, 10);
+          geo.scale(1.2, 0.6, 1.2);
+          const leaf = new THREE.Mesh(geo, greensMat);
+          const x = Math.cos(angle) * radius;
+          const z = Math.sin(angle) * radius;
+          leaf.position.set(x, 0.32, z);
+          leaf.rotation.set(
+            (Math.random() - 0.5) * 0.6,
+            (Math.random() - 0.5) * 0.6,
+            (Math.random() - 0.5) * 0.6
+          );
+          leaf.castShadow = true;
+          leaf.receiveShadow = true;
+          turkeyGroup.add(leaf);
+        }
+
+        const tomatoMat = new THREE.MeshStandardMaterial({
+          color: 0xe6412f,
+          roughness: 0.6,
+          metalness: 0.1,
+          emissive: 0x310707,
+          emissiveIntensity: 0.25
+        });
+
+        for (let i = 0; i < 8; i++) {
+          const angle = ((i + 0.5) / 8) * Math.PI * 2;
+          const radius = 1.9;
+          const sphere = new THREE.SphereGeometry(0.22, 16, 16);
+          const tom = new THREE.Mesh(sphere, tomatoMat);
+          const x = Math.cos(angle) * radius;
+          const z = Math.sin(angle) * radius;
+          tom.position.set(x, 0.42, z);
+          tom.castShadow = true;
+          tom.receiveShadow = true;
+          turkeyGroup.add(tom);
+        }
+      }
+
+      function createSideDishes() {
+        const sideGroup = new THREE.Group();
+        sideGroup.position.y = 3.25;
+        scene.add(sideGroup);
+
+        const bowlOuterGeo = new THREE.CylinderGeometry(1.3, 1.4, 0.6, 32, 1, false);
+        const bowlInnerGeo = new THREE.CylinderGeometry(1.15, 1.2, 0.55, 32, 1, false);
+        bowlInnerGeo.translate(0, 0.02, 0);
+
+        const bowlMat = new THREE.MeshStandardMaterial({
+          color: 0xf4f0ea,
+          roughness: 0.35,
+          metalness: 0.6,
+          emissive: 0x29241e,
+          emissiveIntensity: 0.08
+        });
+
+        const bowlOuter = new THREE.Mesh(bowlOuterGeo, bowlMat);
+        const bowlInner = new THREE.Mesh(bowlInnerGeo, bowlMat);
+        bowlInner.scale.set(0.97, 0.97, 0.97);
+
+        const mashedGeo = new THREE.SphereGeometry(1.0, 32, 32);
+        mashedGeo.scale(1.1, 0.4, 1.1);
+        const mashedMat = new THREE.MeshStandardMaterial({
+          color: 0xf3e3b6,
+          roughness: 0.75,
+          metalness: 0.05,
+          emissive: 0x3f3215,
+          emissiveIntensity: 0.12
+        });
+        const mashed = new THREE.Mesh(mashedGeo, mashedMat);
+        mashed.position.set(0, 0.4, 0);
+
+        const mashGroup = new THREE.Group();
+        mashGroup.add(bowlOuter);
+        mashGroup.add(bowlInner);
+        mashGroup.add(mashed);
+        mashGroup.position.set(-3.9, 0.3, -1.0);
+        mashGroup.castShadow = true;
+        mashGroup.receiveShadow = true;
+        sideGroup.add(mashGroup);
+
+        const pieGeo = new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
+        const pieCrustMat = new THREE.MeshStandardMaterial({
+          color: 0xc27b42,
+          roughness: 0.7,
+          metalness: 0.1,
+          emissive: 0x2b1306,
+          emissiveIntensity: 0.15
+        });
+
+        const pie = new THREE.Mesh(pieGeo, pieCrustMat);
+        pie.castShadow = true;
+        pie.receiveShadow = true;
+
+        const fillingGeo = new THREE.CylinderGeometry(1.25, 1.25, 0.26, 32);
+        const fillingMat = new THREE.MeshStandardMaterial({
+          color: 0xe08a3c,
+          roughness: 0.65,
+          metalness: 0.08,
+          emissive: 0x3b1703,
+          emissiveIntensity: 0.2
+        });
+        const filling = new THREE.Mesh(fillingGeo, fillingMat);
+        filling.position.y = 0.17;
+        filling.castShadow = true;
+        filling.receiveShadow = true;
+
+        const pieGroup = new THREE.Group();
+        pieGroup.add(pie);
+        pieGroup.add(filling);
+        pieGroup.position.set(4.2, 0.3, -1.0);
+        sideGroup.add(pieGroup);
+
+        const dollopGeo = new THREE.SphereGeometry(0.15, 16, 16);
+        const dollopMat = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.35,
+          metalness: 0.05,
+          emissive: 0x1f1f1f,
+          emissiveIntensity: 0.07
+        });
+
+        const dollopCount = 6;
+        for (let i = 0; i < dollopCount; i++) {
+          const angle = (i / dollopCount) * Math.PI * 2;
+          const radius = 0.8;
+          const x = Math.cos(angle) * radius;
+          const z = Math.sin(angle) * radius;
+          const dollop = new THREE.Mesh(dollopGeo, dollopMat);
+          dollop.position.set(x, 0.5, z);
+          dollop.castShadow = true;
+          dollop.receiveShadow = true;
+          pieGroup.add(dollop);
+        }
+
+        createPlatesAndUtensils(sideGroup);
+      }
+
+      function createPlatesAndUtensils(parent) {
+        const plateMat = new THREE.MeshStandardMaterial({
+          color: 0xf8f6f2,
+          roughness: 0.5,
+          metalness: 0.4,
+          emissive: 0x201f1d,
+          emissiveIntensity: 0.08
+        });
+
+        const plateGeo = new THREE.CylinderGeometry(0.95, 1.0, 0.08, 32);
+
+        const platePositions = [
+          [-3.5, 0.34, 2.0],
+          [3.5, 0.34, 2.0]
+        ];
+
+        platePositions.forEach(function (pos) {
+          const plate = new THREE.Mesh(plateGeo, plateMat);
+          plate.position.set(pos[0], pos[1], pos[2]);
+          plate.rotation.x = 0;
+          plate.castShadow = true;
+          plate.receiveShadow = true;
+          parent.add(plate);
+
+          const utensilMat = new THREE.MeshStandardMaterial({
+            color: 0xd8d6d0,
+            roughness: 0.3,
+            metalness: 0.9,
+            emissive: 0x171717,
+            emissiveIntensity: 0.1
+          });
+
+          const handleGeo = new THREE.BoxGeometry(0.05, 0.03, 0.5);
+          const handle = new THREE.Mesh(handleGeo, utensilMat);
+          handle.castShadow = true;
+          handle.receiveShadow = true;
+
+          const bladeGeo = new THREE.BoxGeometry(0.04, 0.02, 0.55);
+          const blade = new THREE.Mesh(bladeGeo, utensilMat);
+          blade.position.z = 0.27;
+          blade.castShadow = true;
+          blade.receiveShadow = true;
+
+          const knife = new THREE.Group();
+          knife.add(handle);
+          knife.add(blade);
+          knife.position.set(pos[0] + 0.8, pos[1] + 0.05, pos[2]);
+          knife.rotation.y = Math.PI / 2 + 0.1;
+          knife.rotation.x = -0.02;
+          parent.add(knife);
+
+          const forkHandle = handle.clone();
+          const forkTineMat = utensilMat;
+          const tineGeo = new THREE.BoxGeometry(0.03, 0.02, 0.13);
+
+          const fork = new THREE.Group();
+          fork.add(forkHandle);
+
+          const tineSpacing = 0.04;
+          for (let i = 0; i < 4; i++) {
+            const tine = new THREE.Mesh(tineGeo, forkTineMat);
+            tine.position.set(-0.06 + i * tineSpacing, 0.01, -0.22);
+            tine.castShadow = true;
+            tine.receiveShadow = true;
+            fork.add(tine);
+          }
+
+          fork.position.set(pos[0] - 0.8, pos[1] + 0.05, pos[2]);
+          fork.rotation.y = -Math.PI / 2 - 0.05;
+          fork.rotation.x = -0.02;
+          parent.add(fork);
+        });
+      }
+
+      function createCandles() {
+        const candleMat = new THREE.MeshStandardMaterial({
+          color: 0xfdf6e8,
+          roughness: 0.5,
+          metalness: 0.05
+        });
+
+        const waxGeo = new THREE.CylinderGeometry(0.18, 0.2, 1.2, 24);
+        const wickGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.12, 8);
+        const flameGeo = new THREE.SphereGeometry(0.12, 16, 16);
+
+        const flameMat = new THREE.MeshStandardMaterial({
+          color: 0xffd27b,
+          emissive: 0xffb347,
+          emissiveIntensity: 2.0,
+          roughness: 0.3,
+          metalness: 0.1
+        });
+
+        const candlePositions = [
+          [-1.8, 3.9, -2.0],
+          [1.8, 3.9, -2.0],
+          [0.0, 3.9, 2.2]
+        ];
+
+        candlePositions.forEach(function (pos) {
+          const candleGroup = new THREE.Group();
+          candleGroup.position.set(pos[0], pos[1], pos[2]);
+          scene.add(candleGroup);
+
+          const wax = new THREE.Mesh(waxGeo, candleMat);
+          wax.castShadow = true;
+          wax.receiveShadow = true;
+          wax.position.y = 0.6;
+          candleGroup.add(wax);
+
+          const wick = new THREE.Mesh(wickGeo, candleMat);
+          wick.position.y = 1.25;
+          candleGroup.add(wick);
+
+          const flame = new THREE.Mesh(flameGeo, flameMat);
+          flame.position.y = 1.46;
+          candleGroup.add(flame);
+
+          const light = new THREE.PointLight(0xffc977, 1.6, 12, 2.0);
+          light.position.set(pos[0], pos[1] + 1.4, pos[2]);
+          light.castShadow = true;
+          light.shadow.mapSize.width = 1024;
+          light.shadow.mapSize.height = 1024;
+          light.shadow.bias = -0.0006;
+          scene.add(light);
+
+          candleLights.push({
+            light: light,
+            flame: flame,
+            baseIntensity: light.intensity,
+            baseScale: 1.0,
+            flickerOffset: Math.random() * 1000
+          });
+        });
+      }
+
+      function updateCandleFlicker(time) {
+        for (let i = 0; i < candleLights.length; i++) {
+          const candle = candleLights[i];
+          const t = time * 5 + candle.flickerOffset;
+          const noise =
+            (Math.sin(t * 3.1) +
+              Math.sin(t * 2.3) * 0.6 +
+              Math.sin(t * 4.7) * 0.3) / 3.0;
+
+          const intensity = candle.baseIntensity * (1.0 + noise * 0.28);
+          candle.light.intensity = intensity;
+
+          const scaleY = candle.baseScale * (1.0 + noise * 0.35);
+          const scaleXZ = candle.baseScale * (1.0 + noise * 0.15);
+          candle.flame.scale.set(scaleXZ, scaleY, scaleXZ);
+
+          candle.light.position.y += (0.02 * Math.sin(t * 10)) * 0.5;
+        }
+      }
+
+      function createDustParticles() {
+        const particleCount = 200;
+        const particleGeo = new THREE.SphereGeometry(0.03, 6, 6);
+        const particleMat = new THREE.MeshBasicMaterial({
+          color: 0xffc58a,
+          transparent: true,
+          opacity: 0.0
+        });
+
+        const areaSize = { x: 16, y: 8, z: 12 };
+
+        for (let i = 0; i < particleCount; i++) {
+          const mesh = new THREE.Mesh(particleGeo, particleMat.clone());
+          mesh.position.set(
+            (Math.random() - 0.5) * areaSize.x,
+            2 + Math.random() * areaSize.y,
+            (Math.random() - 0.5) * areaSize.z
+          );
+          mesh.material.opacity = 0.1 + Math.random() * 0.25;
+          mesh.userData = {
+            speed: 0.12 + Math.random() * 0.08,
+            phase: Math.random() * Math.PI * 2
+          };
+          mesh.renderOrder = 2;
+          scene.add(mesh);
+          dustParticles.push(mesh);
+        }
+      }
+
+      function updateDustParticles(delta) {
+        const areaSize = { x: 16, y: 8, z: 12 };
+        dustParticles.forEach(function (p) {
+          const data = p.userData;
+          p.position.y += data.speed * delta;
+          p.position.x += Math.sin(data.phase + performance.now() * 0.0003) * 0.012;
+          p.position.z += Math.cos(data.phase + performance.now() * 0.00027) * 0.012;
+
+          if (p.position.y > 10) {
+            p.position.y = 2 + Math.random() * 2.0;
+            p.position.x = (Math.random() - 0.5) * areaSize.x;
+            p.position.z = (Math.random() - 0.5) * areaSize.z;
+          }
+        });
+      }
+
+      function createFallingLeaves() {
+        const leafCount = 40;
+
+        const leafShape = new THREE.Shape();
+        leafShape.moveTo(0, 0);
+        leafShape.quadraticCurveTo(0.3, 0.4, 0, 0.8);
+        leafShape.quadraticCurveTo(-0.3, 0.4, 0, 0);
+
+        const leafGeo = new THREE.ShapeGeometry(leafShape);
+
+        const leafMat = new THREE.MeshStandardMaterial({
+          color: 0xe6973c,
+          roughness: 0.8,
+          metalness: 0.1,
+          side: THREE.DoubleSide,
+          emissive: 0x3a1e06,
+          emissiveIntensity: 0.3
+        });
+
+        for (let i = 0; i < leafCount; i++) {
+          const leaf = new THREE.Mesh(leafGeo, leafMat.clone());
+          leaf.scale.setScalar(0.8 + Math.random() * 0.9);
+          leaf.position.set(
+            (Math.random() - 0.5) * 18,
+            8 + Math.random() * 6,
+            -6 + Math.random() * 12
+          );
+          leaf.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+          );
+          leaf.castShadow = true;
+          leaf.receiveShadow = false;
+
+          leaf.userData = {
+            fallSpeed: 0.8 + Math.random() * 0.45,
+            swaySpeed: 0.4 + Math.random() * 0.5,
+            swayAmount: 0.4 + Math.random() * 0.6,
+            spinSpeed: (Math.random() - 0.5) * 2,
+            baseX: leaf.position.x,
+            baseZ: leaf.position.z,
+            phase: Math.random() * Math.PI * 2
+          };
+
+          scene.add(leaf);
+          leafMeshes.push(leaf);
+        }
+      }
+
+      function updateLeaves(delta, time) {
+        leafMeshes.forEach(function (leaf) {
+          const d = leaf.userData;
+
+          leaf.position.y -= d.fallSpeed * delta;
+          leaf.position.x = d.baseX + Math.sin(time * d.swaySpeed + d.phase) * d.swayAmount;
+          leaf.position.z = d.baseZ + Math.cos(time * d.swaySpeed * 0.7 + d.phase) * d.swayAmount;
+
+          leaf.rotation.x += d.spinSpeed * delta * 0.6;
+          leaf.rotation.y += d.spinSpeed * delta * 0.3;
+          leaf.rotation.z += d.spinSpeed * delta * 0.5;
+
+          if (leaf.position.y < 0.4) {
+            leaf.position.y = 8 + Math.random() * 6;
+            leaf.userData.baseX = (Math.random() - 0.5) * 18;
+            leaf.userData.baseZ = -6 + Math.random() * 12;
+          }
+        });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+        const elapsed = clock.elapsedTime;
+
+        const driftAmount = 0.4;
+        camera.position.x += Math.sin(elapsed * 0.12) * driftAmount * delta;
+        camera.position.z += Math.cos(elapsed * 0.10) * driftAmount * delta * 0.7;
+
+        controls.update();
+        updateCandleFlicker(elapsed);
+        updateDustParticles(delta);
+        updateLeaves(delta, elapsed);
+
+        if (turkeyGroup) {
+          const scaleUp = 1.0 + Math.sin(elapsed * 1.4) * 0.01;
+          turkeyGroup.scale.set(scaleUp, scaleUp, scaleUp);
+          turkeyGroup.position.y = 3.6 + Math.sin(elapsed * 1.4) * 0.02;
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      function onWindowResize() {
+        if (resizeTimeout) {
+          clearTimeout(resizeTimeout);
+        }
+        resizeTimeout = setTimeout(function () {
+          const width = window.innerWidth;
+          const height = window.innerHeight;
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+          renderer.setSize(width, height);
+        }, 80);
+      }
+    </script>
+  </body>
+</html>
