@@ -8,27 +8,29 @@
     body {
       margin: 0;
       font-family: "Lato", sans-serif;
-      background: url('yumu-R4AtmuoaCt0-unsplash.jpg') 
-        no-repeat fixed;
+      background: url('yumu-R4AtmuoaCt0-unsplash.jpg') no-repeat fixed;
       background-size: cover;
-      background-position: 50px center; /* this is making it shift 50px closer to the center. */
+      background-position: 50px center;
       overflow: hidden;
     }
-:root {
+
+    :root {
       --btn-bg: #2563eb;
       --btn-color: #fff;
       --btn-padding: 0.6rem 1.2rem;
-      --btn-radius: 4px; /* smooth corners */
-      --btn-transition: 180ms ease; /* transition time */
+      --btn-radius: 4px;
+      --btn-transition: 180ms ease;
+      --white: #e7e6e6;
     }
 
+    /* --- Buttons --- */
     .button-container {
       position: absolute;
-      top: 10%; /* distance from top */
+      top: 10%;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 1rem; /* spacing between buttons */
+      gap: 1rem;
     }
 
     .btn {
@@ -42,24 +44,20 @@
       font-weight: 600;
       line-height: 1;
       cursor: pointer;
-      transition: transform var(--btn-transition), 
-                  box-shadow var(--btn-transition), 
-                  background var(--btn-transition), 
+      transition: transform var(--btn-transition),
+                  box-shadow var(--btn-transition),
+                  background var(--btn-transition),
                   color var(--btn-transition);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       backface-visibility: hidden;
       transform: translateZ(0);
-
-      box-shadow: 
+      box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.03) inset,
         0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
-    /* Hover / active states */
     .btn:hover {
-      background: transparent; /* turn transparent */
-      color: var(--btn-bg); /* text turns blue */
+      background: transparent;
+      color: var(--btn-bg);
       transform: translateY(-1px);
       box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
     }
@@ -68,27 +66,23 @@
       transform: translateY(0);
     }
 
-    /* Focus accessibility */
     .btn:focus-visible {
       outline: 3px solid rgba(37, 99, 235, 0.18);
       outline-offset: 2px;
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
     }
 
-    /* Ghost style variant */
+    /* Ghost-style button */
     .btn-ghost {
       background: orange;
       color: var(--btn-bg);
       border: 1px solid rgba(37, 99, 235, 0.25);
       box-shadow: none;
     }
-
     .btn-ghost:hover {
       background: rgba(37, 99, 235, 0.05);
       box-shadow: none;
     }
-
-
 
     /* --- Sidebar --- */
     .sidebar {
@@ -119,10 +113,8 @@
 
     .content {
       margin-left: 200px;
-      padding: 0;
       height: 100%;
       min-height: 100vh;
-      position: relative;
       display: grid;
       place-items: center;
     }
@@ -144,75 +136,13 @@
       }
     }
 
-    :root {
-      --btn-bg: #2563eb;
-      --btn-color: #fff;
-      --btn-padding: 0.6rem 1.2rem;
-      --btn-radius: 4px;
-      --btn-transition: 180ms ease;
-      --white: #e7e6e6;
-    }
-
-    .button-container {
-      position: absolute;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 1rem;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: var(--btn-padding);
-      background: var(--btn-bg);
-      color: var(--btn-color);
-      text-decoration: none;
-      border-radius: var(--btn-radius);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      font-weight: 600;
-      line-height: 1;
-      cursor: pointer;
-      transition: transform var(--btn-transition),
-                  box-shadow var(--btn-transition),
-                  background var(--btn-transition),
-                  color var(--btn-transition);
-      backface-visibility: hidden;
-      transform: translateZ(0);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
-                  0 1px 2px rgba(0, 0, 0, 0.04);
-    }
-
-    .btn:hover {
-      background: transparent;
-      color: var(--btn-bg);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
-    }
-    .btn:active { transform: translateY(0); }
-    .btn:focus-visible {
-      outline: 3px solid rgba(37, 99, 235, 0.18);
-      outline-offset: 2px;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
-    }
-
-    .btn-ghost {
-      background: orange;
-      color: var(--btn-bg);
-      border: 1px solid rgba(37, 99, 235, 0.25);
-      box-shadow: none;
-    }
-    .btn-ghost:hover {
-      background: rgba(37, 99, 235, 0.05);
-      box-shadow: none;
-    }
-
     /* --- Main Ghost --- */
     .ghost {
       width: 8vmin;
       height: 12vmin;
       background-color: var(--white);
-      background-image: radial-gradient(ellipse at 35% 40%, #000 8%, transparent 0%),
+      background-image:
+        radial-gradient(ellipse at 35% 40%, #000 8%, transparent 0%),
         radial-gradient(ellipse at 65% 40%, #000 8%, transparent 0%),
         radial-gradient(ellipse at 50% 60%, #000 8%, transparent 0%);
       border-radius: 100% / 70% 70% 0% 0%;
@@ -232,24 +162,22 @@
     .ghost div { position: absolute; width: 20%; background-color: var(--white); }
     .ghost div:nth-of-type(1) {
       height: 7vmin; left: 0; bottom: -6vmin;
-      border-radius: 100% / 0% 0% 50% 50%;
+      border-radius: 100% / 0 0 50% 50%;
     }
     .ghost div:nth-of-type(2),
     .ghost div:nth-of-type(4) {
       height: 4vmin; left: 20%; bottom: -3vmin;
-      border-radius: 100% / 50% 50% 0% 0%;
+      border-radius: 100% / 50% 50% 0 0;
       background-color: transparent;
     }
     .ghost div:nth-of-type(3) {
       height: 4vmin; left: 40%; bottom: -3.95vmin;
-      border-radius: 100% / 0% 0% 60% 60%;
-      background-color: var(--white);
+      border-radius: 100% / 0 0 60% 60%;
     }
     .ghost div:nth-of-type(4) { left: 60%; }
     .ghost div:nth-of-type(5) {
       height: 3vmin; left: 80%; bottom: -2.9vmin;
-      border-radius: 100% / 0% 0% 70% 70%;
-      background-color: var(--white);
+      border-radius: 100% / 0 0 70% 70%;
     }
 
     /* --- Pumpkins --- */
@@ -261,6 +189,7 @@
       display: flex;
       gap: 3vw;
     }
+
     .pumpkin {
       font-size: 9vmin;
       animation: jump 1.5s infinite ease-in-out;
@@ -269,6 +198,7 @@
                    0 0 40px currentColor,
                    0 0 80px currentColor;
     }
+
     .pumpkin:nth-child(1) { color: #ff7300; animation-delay: 0s; }
     .pumpkin:nth-child(2) { color: #ff00ff; animation-delay: 0.3s; }
     .pumpkin:nth-child(3) { color: #00ffff; animation-delay: 0.6s; }
@@ -286,7 +216,7 @@
       width: 7vmin;
       height: 10vmin;
       background-color: white;
-      background-image: 
+      background-image:
         radial-gradient(ellipse at 35% 40%, #000 12%, transparent 0%),
         radial-gradient(ellipse at 65% 40%, #000 12%, transparent 0%),
         radial-gradient(ellipse at 50% 70%, #000 12%, transparent 0%);
@@ -295,48 +225,61 @@
       animation: float 5s ease-in-out infinite alternate,
                  ghostMouth 2s ease-in-out infinite,
                  fadeGhost 6s ease-in-out infinite alternate;
-      box-shadow: 0 0 25px rgba(255,255,255,1),
-                  0 0 50px rgba(200,200,255,0.9),
-                  0 0 100px rgba(160,160,255,0.8);
+      box-shadow:
+        0 0 25px rgba(255,255,255,1),
+        0 0 50px rgba(200,200,255,0.9),
+        0 0 100px rgba(160,160,255,0.8);
       filter: brightness(1.3);
     }
 
-    @keyframes float { from { transform: translateY(0); } to { translateY(-20px); } }
+    @keyframes float { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+
     @keyframes ghostMouth {
       0%, 100% {
-        background-image: radial-gradient(ellipse at 35% 40%, #000 12%, transparent 0%),
-                          radial-gradient(ellipse at 65% 40%, #000 12%, transparent 0%),
-                          radial-gradient(ellipse at 50% 70%, #000 8%, transparent 0%);
+        background-image:
+          radial-gradient(ellipse at 35% 40%, #000 12%, transparent 0%),
+          radial-gradient(ellipse at 65% 40%, #000 12%, transparent 0%),
+          radial-gradient(ellipse at 50% 70%, #000 8%, transparent 0%);
       }
       50% {
-        background-image: radial-gradient(ellipse at 35% 40%, #000 12%, transparent 0%),
-                          radial-gradient(ellipse at 65% 40%, #000 12%, transparent 0%),
-                          radial-gradient(ellipse at 50% 70%, #000 18%, transparent 0%);
+        background-image:
+          radial-gradient(ellipse at 35% 40%, #000 12%, transparent 0%),
+          radial-gradient(ellipse at 65% 40%, #000 12%, transparent 0%),
+          radial-gradient(ellipse at 50% 70%, #000 18%, transparent 0%);
       }
     }
+
     @keyframes fadeGhost { from { opacity: 0.3; } to { opacity: 1; } }
 
     .side-ghost.left { left: 15%; top: 20%; }
     .side-ghost.right { right: 1%; top: 30%; }
   </style>
 </head>
+
 <body>
 
 <div class="container">
-    <!-- Buttons above ghost -->
-    <div class="button-container">
-      <a href="#spooky" class="btn">Spooky</a>
-      <a href="Chinese.html" class="btn btn-ghost">Lunar</a>
-    </div>
+
+  <!-- Buttons above ghost -->
+  <div class="button-container">
+    <a href="#spooky" class="btn">Spooky</a>
+
+    <!-- NEW THANKSGIVING BUTTON -->
+    <a href="Thanksgiving.html" class="btn" style="background: yellow; color: blue;">Thanksgiving</a>
+
+    <a href="Chinese.html" class="btn btn-ghost">Lunar</a>
+  </div>
 
   <div class="sidebar">
-    <a href="index.html">Home</a>
+    <a href="indexfull.html">Home</a>
     <a class="active" href="#news">News</a>
     <a href="indexinfo.html">Info</a>
     <a href="indexcontact.html">Contact</a>
   </div>
 
-  <div class="ghost"><div></div><div></div><div></div><div></div><div></div></div>
+  <div class="ghost">
+    <div></div><div></div><div></div><div></div><div></div>
+  </div>
 
   <div class="pumpkin-container">
     <div class="pumpkin">🎃</div><div class="pumpkin">🎃</div>
@@ -346,5 +289,8 @@
 
   <div class="side-ghost left"></div>
   <div class="side-ghost right"></div>
+
+</div>
+
 </body>
 </html>
