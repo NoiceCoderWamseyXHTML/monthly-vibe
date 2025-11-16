@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Thanksgiving</title>
+    <title>Three.js Thanksgiving Feast Scene</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       html,
@@ -74,22 +74,33 @@
       place-items: center;
     }
 
-    @media screen and (max-width: 700px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+    @media screen and (max-width: 800px) {
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+        }
+        .sidebar a {
+          float: left;
+          width: 33.33%;
+        }
+        .content {
+          margin-left: 0;
+          width: 100%;
+          height: calc(100% - 48px);
+        }
       }
-      .sidebar a { float: left; }
-      .content { margin-left: 0; }
-    }
 
-    @media screen and (max-width: 400px) {
-      .sidebar a {
-        text-align: center;
-        float: none;
+      @media screen and (max-width: 450px) {
+        .sidebar a {
+          float: none;
+          width: 100%;
+          text-align: center;
+        }
+        .content {
+          height: calc(100% - 160px);
+        }
       }
-    }
     </style>
   </head>
 
