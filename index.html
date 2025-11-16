@@ -6,6 +6,7 @@
   <title>Ramsey's Website Homepage</title>
   <style>
     @import url('https://fonts.googleapis.com/css?family=Concert+One');
+    @import url("https://fonts.googleapis.com/css2?family=Nabla&display=swap");
 
     * {
       box-sizing: border-box;
@@ -16,28 +17,15 @@
     body {
       margin: 0;
       font-family: "Lato", sans-serif;
-      background: #121212;
+      background: url("Hex Grid.jpg") no-repeat center center fixed;
+      background-size: cover;
       overflow-x: hidden;
       text-align: center;
     }
-    
-    html, body, canvas {
-      width: 100%;
-      height: 100%;
-    }
-
-    canvas {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-    }
-
-    canvas.hex1 { z-index: -2; }
-    canvas.hex2 { z-index: -1; }
 
     .sidebar {
+      margin: 0;
+      padding: 0;
       width: 200px;
       background-color: rgba(241, 241, 241, 0.9);
       position: fixed;
@@ -65,19 +53,24 @@
       margin-left: 200px;
       padding: 1px 16px;
       min-height: 100vh;
-      position: relative;
-      z-index: 10;
     }
 
     @media screen and (max-width: 700px) {
-      .sidebar { width: 100%; height: auto; position: relative; }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
       .sidebar a { float: left; }
       div.content { margin-left: 0; }
     }
     @media screen and (max-width: 400px) {
-      .sidebar a { text-align: center; float: none; }
+      .sidebar a {
+        text-align: center;
+        float: none;
+      }
     }
-
+    
     figure {
       margin: 10px auto 0 auto;
       animation: wobble 5s ease-in-out infinite;
@@ -123,14 +116,9 @@
     h1:nth-child(8)  { transform: translateX(-50%) translateZ(35px); }
     h1:nth-child(9)  { transform: translateX(-50%) translateZ(40px); }
     h1:nth-child(10) { transform: translateX(-50%) translateZ(45px); }
-
   </style>
 </head>
 <body>
-
-  <canvas class="hex1"></canvas>
-  <canvas class="hex2"></canvas>
-
   <div class="sidebar">
     <a class="active" href="#home">Home</a>
     <a href="indexspooky.html">News</a>
@@ -152,215 +140,18 @@
       <h1>Welcome To My Website</h1>
       <h1>Welcome To My Website</h1>
     </figure>
-
-    <h2 style="color: red; position: absolute; top: 50%; left: 27%;">
-      This website is founded by me Ramsey Kitterman<br>
-      a 5th grader who likes to code...<br>
-      this website displays themes every month<br>
-      that represents the monthly vibe<br>
-      for example October is halloween<br>
-      so it would be a spooky theme but that is <br>
-      only in the news page.<br>
-      There are going to be a lot more<br>
-      features that are work in progress<br>
-      right now so stay tuned for the latest updates!
-    </h2>
+    
+    <h2 style="color: red; font-size: 30px; position: absolute; top: 50%; left: 18%; font-family: 'Concert One', sans-serif;">This website is founded by me Ramsey Kitterman
+                           a 5th grader who likes to code...<br>
+                        this website displays themes every month<br>
+                           that represents the monthly vibe<br>
+                           for example October is halloween<br>
+                     so it would be a spooky theme but that is <br>
+                                only in the news page.<br>
+                            There are going to be a lot more<br>
+                         features that are work in progress<br>
+                    right now so stay tuned for the latest updates!</h2>
   </div>
-
-  <script>
-for (const p in Math) window[p] = Math[p];
-
-var HEX_CRAD = 32, 
-    HEX_BG = '#171717', 
-    HEX_HL = '#2a2a2a', 
-    HEX_HLW = 2, 
-    HEX_GAP = 4, 
-    NEON_PALETE = [
-      '#cb3301', '#ff0066', '#ff6666', '#feff99',
-      '#ffff67', '#ccff66', '#99fe00', '#fe99ff',
-      '#ff99cb', '#fe349a', '#cc99fe', '#6599ff',
-      '#00ccff', '#ffffff'
-    ], 
-    T_SWITCH = 64, 
-
-    unit_x = 3 * HEX_CRAD + HEX_GAP * Math.sqrt(3), 
-    unit_y = HEX_CRAD * Math.sqrt(3) * 0.5 + 0.5 * HEX_GAP, 
-    off_x = 1.5 * HEX_CRAD + HEX_GAP * Math.sqrt(3) * 0.5, 
-
-    wp = NEON_PALETE.map(function(c) {
-      var num = parseInt(c.replace('#', ''), 16);
-      return {
-        'r': num >> 16 & 0xFF, 
-        'g': num >> 8 & 0xFF, 
-        'b': num & 0xFF
-      };
-    }), 
-    nwp = wp.length, csi = 0, 
-
-    f = 1 / T_SWITCH, 
-
-    c = document.querySelectorAll('canvas.hex1, canvas.hex2'), 
-    n = c.length, w, h, _min, 
-    ctx = [], 
-    grid, source = null, 
-    t = 0, request_id = null;
-
-var GridItem = function(x, y) {
-  this.x = x || 0;
-  this.y = y || 0;
-  this.points = { 'hex': [], 'hl': [] };
-  
-  this.init = function() {
-    var x, y, a, ba = Math.PI / 3, 
-        ri = HEX_CRAD - 0.5 * HEX_HLW;
-    
-    for (var i = 0; i < 6; i++) {
-      a = i * ba;
-      x = this.x + HEX_CRAD * Math.cos(a);
-      y = this.y + HEX_CRAD * Math.sin(a);
-      
-      this.points.hex.push({ 'x': x, 'y': y });
-      
-      if (i > 2) {
-        x = this.x + ri * Math.cos(a);
-        y = this.y + ri * Math.sin(a);
-        
-        this.points.hl.push({ 'x': x, 'y': y });
-      }
-    }
-  };
-  
-  this.draw = function(ct) {
-    for (var i = 0; i < 6; i++) {
-      ct[(i === 0 ? 'move' : 'line') + 'To'](
-        this.points.hex[i].x, 
-        this.points.hex[i].y
-      );
-    }
-  };
-  
-  this.highlight = function(ct) {
-    for (var i = 0; i < 3; i++) {
-      ct[(i === 0 ? 'move' : 'line') + 'To'](
-        this.points.hl[i].x, 
-        this.points.hl[i].y
-      );
-    }
-  };
-  
-  this.init();
-};
-
-var Grid = function(rows, cols) {
-  this.cols = cols || 16;
-  this.rows = rows || 16;
-  this.items = [];
-  this.n = this.items.length;
-  
-  this.init = function() {
-    var x, y;
-    
-    for (var row = 0; row < this.rows; row++) {
-      y = row * unit_y;
-      for (var col = 0; col < this.cols; col++) {
-        x = ((row % 2 == 0) ? 0 : off_x) + col * unit_x;
-        this.items.push(new GridItem(x, y));
-      }
-    }
-    this.n = this.items.length;
-  };
-  
-  this.draw = function(ct) {
-    ct.fillStyle = HEX_BG;
-    ct.beginPath();
-    for (var i = 0; i < this.n; i++) {
-      this.items[i].draw(ct);
-    }
-    ct.closePath();
-    ct.fill();
-    
-    ct.strokeStyle = HEX_HL;
-    ct.beginPath();
-    for (var i = 0; i < this.n; i++) {
-      this.items[i].highlight(ct);
-    }
-    ct.closePath();
-    ct.stroke();
-  };
-  
-  this.init();
-};
-
-functionsEtc();
-
-function functionsEtc() {
-  function init() {
-    var s = getComputedStyle(c[0]);
-    w = parseInt(s.width);
-    h = parseInt(s.height);
-    _min = 0.75 * Math.min(w, h);
-  
-    var rows = Math.floor(h / unit_y) + 2;
-    var cols = Math.floor(w / unit_x) + 2;
-  
-    for (var i = 0; i < n; i++) {
-      c[i].width = w;
-      c[i].height = h;
-      ctx[i] = c[i].getContext('2d');
-    }
-  
-    grid = new Grid(rows, cols);
-    grid.draw(ctx[1]);
-  
-    if (!source) {
-      source = { 'x': w / 2, 'y': h / 2 };
-    }
-  
-    neon();
-  }
-  
-  function neon() {
-    var k = (t % T_SWITCH) * f, 
-        rgb = {
-          'r': Math.floor(wp[csi].r * (1 - k) + wp[(csi + 1) % nwp].r * k), 
-          'g': Math.floor(wp[csi].g * (1 - k) + wp[(csi + 1) % nwp].g * k), 
-          'b': Math.floor(wp[csi].b * (1 - k) + wp[(csi + 1) % nwp].b * k)
-        }, 
-        rgb_str = `rgb(${rgb.r},${rgb.g},${rgb.b})`, 
-        light = ctx[0].createRadialGradient(source.x, source.y, 0, source.x, source.y, 0.875 * _min);
-    
-    var stp = 0.5 - 0.5 * Math.sin(7 * t * f) * Math.cos(5 * t * f) * Math.sin(3 * t * f);
-    
-    light.addColorStop(0, rgb_str);
-    light.addColorStop(stp, 'rgba(0,0,0,0.03)');
-    
-    fillBackground('rgba(0,0,0,0.02)');
-    fillBackground(light);
-    
-    t++;
-    if (t % T_SWITCH === 0) {
-      csi++;
-      if (csi === nwp) {
-        csi = 0;
-        t = 0;
-      }
-    }
-    requestAnimationFrame(neon);
-  }
-  
-  function fillBackground(bg_fill) {
-    ctx[0].fillStyle = bg_fill;
-    ctx[0].fillRect(0, 0, w, h);
-  }
-  
-  init();
-  window.addEventListener('resize', init);
-  window.addEventListener('mousemove', function(e) {
-    source = { 'x': e.clientX, 'y': e.clientY };
-  });
-}
-
-  </script>
 
 </body>
 </html>
