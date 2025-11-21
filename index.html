@@ -1,169 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ramsey's Website Homepage</title>
-<style>
-@import url('https://fonts.googleapis.com/css?family=Concert+One');
-@import url("https://fonts.googleapis.com/css2?family=Nabla&display=swap");
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:"Lato",sans-serif;
-  background:url("Hex Grid.jpg") no-repeat center center fixed;
-  background-size:cover;
-  overflow:hidden;
-  text-align:center;
-}
-
-#scaleWrap{
-  position:absolute;
-  top:0;
-  left:0;
-  transform-origin:0 0;
-  width:775px;
-  height:805px;
-}
-
-.sidebar{
-  margin:0;
-  padding:0;
-  width:200px;
-  background-color:rgba(241,241,241,0.9);
-  position:fixed;
-  height:100%;
-  overflow:auto;
-  z-index:5;
-}
-
-.sidebar a{
-  display:block;
-  color:black;
-  padding:16px;
-  text-decoration:none;
-}
-
-.sidebar a.active{
-  background-color:#04AA6D;
-  color:white;
-}
-
-.sidebar a:hover:not(.active){
-  background-color:#555;
-  color:white;
-}
-
-.content{
-  margin-left:200px;
-  padding:1px 16px;
-  min-height:100vh;
-}
-
-figure{
-  margin:10px auto 0 auto;
-  animation:wobble 5s ease-in-out infinite;
-  transform-origin:center center;
-  transform-style:preserve-3d;
-  position:relative;
-  display:inline-block;
-}
-
-@keyframes wobble{
-  0%,100%{transform:rotate3d(1,1,0,40deg);}
-  25%{transform:rotate3d(-1,1,0,40deg);}
-  50%{transform:rotate3d(-1,-1,0,40deg);}
-  75%{transform:rotate3d(1,-1,0,40deg);}
-}
-
-h1{
-  display:block;
-  padding:40px;
-  line-height:1.5;
-  font:900 5em "Concert One",sans-serif;
-  text-transform:uppercase;
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  color:#0a0a0a;
-  animation:glow 10s ease-in-out infinite;
-}
-
-@keyframes glow{
-  0%,100%{text-shadow:0 0 30px red;}
-  25%{text-shadow:0 0 30px orange;}
-  50%{text-shadow:0 0 30px forestgreen;}
-  75%{text-shadow:0 0 30px cyan;}
-}
-
-h1:nth-child(2){transform:translateX(-50%) translateZ(5px);}
-h1:nth-child(3){transform:translateX(-50%) translateZ(10px);}
-h1:nth-child(4){transform:translateX(-50%) translateZ(15px);}
-h1:nth-child(5){transform:translateX(-50%) translateZ(20px);}
-h1:nth-child(6){transform:translateX(-50%) translateZ(25px);}
-h1:nth-child(7){transform:translateX(-50%) translateZ(30px);}
-h1:nth-child(8){transform:translateX(-50%) translateZ(35px);}
-h1:nth-child(9){transform:translateX(-50%) translateZ(40px);}
-h1:nth-child(10){transform:translateX(-50%) translateZ(45px);}
-</style>
-</head>
-<body>
-
-<div id="scaleWrap">
-  <div class="sidebar">
-    <a class="active" href="#home">Home</a>
-    <a href="indexspooky.html">News</a>
-    <a href="indexinfo.html">Info</a>
-    <a href="indexcontact.html">Contact</a>
-  </div>
-
-  <div class="content">
-    <figure>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-    </figure>
-
-    <h2 style="color:red;font-size:30px;position:absolute;top:50%;left:18%;font-family:'Concert One',sans-serif;">
-      This website is founded by me Ramsey Kitterman<br>
-      a 5th grader who likes to code...<br>
-      this website displays themes every month<br>
-      that represents the monthly vibe<br>
-      for example October is halloween<br>
-      so it would be a spooky theme but that is<br>
-      only in the news page.<br>
-      There are going to be a lot more<br>
-      features that are work in progress<br>
-      right now so stay tuned for the latest updates!
-    </h2>
-  </div>
-</div>
-
-<script>
-function scalePage(){
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const scaleW = w / 775;
-  const scaleH = h / 805;
-  const scale = Math.min(scaleW, scaleH);
-  document.getElementById("scaleWrap").style.transform = "scale(" + scale + ")";
-}
-scalePage();
-window.addEventListener("resize", scalePage);
-</script>
-
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ramsey's Website Homepage</title>
+        <style>
+            @import url("https://fonts.googleapis.com/css?family=Concert+One");
+            @import url("https://fonts.googleapis.com/css2?family=Nabla&display=swap");
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                margin: 0;
+                font-family: "Lato", sans-serif;
+                background: url("Hex Grid.jpg") no-repeat center center fixed;
+                background-size: cover;
+                overflow-x: hidden;
+                text-align: center;
+            }
+            .sidebar {
+                margin: 0;
+                padding: 0;
+                width: 200px;
+                background-color: rgba(241, 241, 241, 0.9);
+                position: fixed;
+                height: 100%;
+                overflow: auto;
+                z-index: 5;
+            }
+            .sidebar a {
+                display: block;
+                color: black;
+                padding: 16px;
+                text-decoration: none;
+            }
+            .sidebar a.active {
+                background-color: #04aa6d;
+                color: white;
+            }
+            .sidebar a:hover:not(.active) {
+                background-color: #555;
+                color: white;
+            }
+            div.content {
+                margin-left: 200px;
+                padding: 1px 16px;
+                min-height: 100vh;
+            }
+            @media screen and (max-width: 700px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                .sidebar a {
+                    float: left;
+                }
+                div.content {
+                    margin-left: 0;
+                }
+            }
+            @media screen and (max-width: 400px) {
+                .sidebar a {
+                    text-align: center;
+                    float: none;
+                }
+            }
+            figure {
+                margin: 10px auto 0 auto;
+                animation: wobble 5s ease-in-out infinite;
+                transform-origin: center center;
+                transform-style: preserve-3d;
+                position: relative;
+                display: inline-block;
+            }
+            @keyframes wobble {
+                0%,
+                100% {
+                    transform: rotate3d(1, 1, 0, 40deg);
+                }
+                25% {
+                    transform: rotate3d(-1, 1, 0, 40deg);
+                }
+                50% {
+                    transform: rotate3d(-1, -1, 0, 40deg);
+                }
+                75% {
+                    transform: rotate3d(1, -1, 0, 40deg);
+                }
+            }
+            h1 {
+                display: block;
+                padding: 40px;
+                line-height: 1.5;
+                font:
+                    900 5em "Concert One",
+                    sans-serif;
+                text-transform: uppercase;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #0a0a0a;
+                animation: glow 10s ease-in-out infinite;
+            }
+            @keyframes glow {
+                0%,
+                100% {
+                    text-shadow: 0 0 30px red;
+                }
+                25% {
+                    text-shadow: 0 0 30px orange;
+                }
+                50% {
+                    text-shadow: 0 0 30px forestgreen;
+                }
+                75% {
+                    text-shadow: 0 0 30px cyan;
+                }
+            }
+            h1:nth-child(2) {
+                transform: translateX(-50%) translateZ(5px);
+            }
+            h1:nth-child(3) {
+                transform: translateX(-50%) translateZ(10px);
+            }
+            h1:nth-child(4) {
+                transform: translateX(-50%) translateZ(15px);
+            }
+            h1:nth-child(5) {
+                transform: translateX(-50%) translateZ(20px);
+            }
+            h1:nth-child(6) {
+                transform: translateX(-50%) translateZ(25px);
+            }
+            h1:nth-child(7) {
+                transform: translateX(-50%) translateZ(30px);
+            }
+            h1:nth-child(8) {
+                transform: translateX(-50%) translateZ(35px);
+            }
+            h1:nth-child(9) {
+                transform: translateX(-50%) translateZ(40px);
+            }
+            h1:nth-child(10) {
+                transform: translateX(-50%) translateZ(45px);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="sidebar">
+            <a class="active" href="#home">Home</a> <a href="indexspooky.html">News</a>
+            <a href="indexinfo.html">Info</a> <a href="indexcontact.html">Contact</a>
+        </div>
+        <div class="content">
+            <figure>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+                <h1>Welcome To My Website</h1>
+            </figure>
+            <h2
+                style="
+                    color: red;
+                    font-size: 30px;
+                    position: absolute;
+                    top: 50%;
+                    left: 18%;
+                    font-family: 'Concert One', sans-serif;
+                "
+            >
+                This website is founded by me Ramsey Kitterman a 5th grader who likes to code...<br />
+                this website displays themes every month<br />
+                that represents the monthly vibe<br />
+                for example October is halloween<br />
+                so it would be a spooky theme but that is <br />
+                only in the news page.<br />
+                There are going to be a lot more<br />
+                features that are work in progress<br />
+                right now so stay tuned for the latest updates!
+            </h2>
+        </div>
+    </body>
 </html>
