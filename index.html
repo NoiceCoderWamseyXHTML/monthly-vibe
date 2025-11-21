@@ -19,8 +19,17 @@
       font-family: "Lato", sans-serif;
       background: url("Hex Grid.jpg") no-repeat center center fixed;
       background-size: cover;
-      overflow-x: hidden;
+      overflow: hidden;
       text-align: center;
+    }
+
+    #scale-wrap {
+      width: 1440px;
+      height: 900px;
+      transform-origin: top left;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
     .sidebar {
@@ -40,10 +49,12 @@
       padding: 16px;
       text-decoration: none;
     }
+
     .sidebar a.active {
       background-color: #04AA6D;
       color: white;
     }
+
     .sidebar a:hover:not(.active) {
       background-color: #555;
       color: white;
@@ -55,22 +66,6 @@
       min-height: 100vh;
     }
 
-    @media screen and (max-width: 700px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
-      .sidebar a { float: left; }
-      div.content { margin-left: 0; }
-    }
-    @media screen and (max-width: 400px) {
-      .sidebar a {
-        text-align: center;
-        float: none;
-      }
-    }
-    
     figure {
       margin: 10px auto 0 auto;
       animation: wobble 5s ease-in-out infinite;
@@ -119,39 +114,55 @@
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <a class="active" href="#home">Home</a>
-    <a href="indexspooky.html">News</a>
-    <a href="indexinfo.html">Info</a>
-    <a href="indexcontact.html">Contact</a>
+  <div id="scale-wrap">
+    <div class="sidebar">
+      <a class="active" href="#home">Home</a>
+      <a href="indexspooky.html">News</a>
+      <a href="indexinfo.html">Info</a>
+      <a href="indexcontact.html">Contact</a>
+    </div>
+
+    <div class="content">
+      <figure>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+        <h1>Welcome To My Website</h1>
+      </figure>
+
+      <h2 style="color: red; font-size: 30px; position: absolute; top: 50%; left: 18%; font-family: 'Concert One', sans-serif;">
+        This website is founded by me Ramsey Kitterman
+        a 5th grader who likes to code...<br>
+        this website displays themes every month<br>
+        that represents the monthly vibe<br>
+        for example October is halloween<br>
+        so it would be a spooky theme but that is <br>
+        only in the news page.<br>
+        There are going to be a lot more<br>
+        features that are work in progress<br>
+        right now so stay tuned for the latest updates!
+      </h2>
+    </div>
   </div>
 
-  <div class="content">
-
-    <figure>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-      <h1>Welcome To My Website</h1>
-    </figure>
-    
-    <h2 style="color: red; font-size: 30px; position: absolute; top: 50%; left: 18%; font-family: 'Concert One', sans-serif;">This website is founded by me Ramsey Kitterman
-                           a 5th grader who likes to code...<br>
-                        this website displays themes every month<br>
-                           that represents the monthly vibe<br>
-                           for example October is halloween<br>
-                     so it would be a spooky theme but that is <br>
-                                only in the news page.<br>
-                            There are going to be a lot more<br>
-                         features that are work in progress<br>
-                    right now so stay tuned for the latest updates!</h2>
-  </div>
+<script>
+function scaleSite() {
+  let baseW = 1440;
+  let baseH = 900;
+  let scaleX = window.innerWidth / baseW;
+  let scaleY = window.innerHeight / baseH;
+  let scale = Math.min(scaleX, scaleY);
+  document.getElementById("scale-wrap").style.transform = "scale(" + scale + ")";
+}
+window.addEventListener("resize", scaleSite);
+window.addEventListener("load", scaleSite);
+</script>
 
 </body>
 </html>
